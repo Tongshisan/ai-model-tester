@@ -1,9 +1,9 @@
-import type { ApiKeys, Chat, Message } from '../types';
+import type { ApiKeys, Chat, Message } from "../types";
 
 const KEYS = {
-  API_KEYS: 'ai-model-tester:api-keys',
-  LOCAL_CHATS: 'ai-model-tester:local-chats',
-  LOCAL_MESSAGES: 'ai-model-tester:local-messages',
+  API_KEYS: "ai-model-tester:api-keys",
+  LOCAL_CHATS: "ai-model-tester:local-chats",
+  LOCAL_MESSAGES: "ai-model-tester:local-messages",
 };
 
 export function getApiKeys(): ApiKeys {
@@ -43,11 +43,14 @@ export function localGetMessages(chatId: string): Message[] {
 }
 
 export function localSaveMessages(chatId: string, messages: Message[]): void {
-  localStorage.setItem(`${KEYS.LOCAL_MESSAGES}:${chatId}`, JSON.stringify(messages));
+  localStorage.setItem(
+    `${KEYS.LOCAL_MESSAGES}:${chatId}`,
+    JSON.stringify(messages),
+  );
 }
 
 export function localDeleteChat(chatId: string): void {
-  const chats = localGetChats().filter(c => c.id !== chatId);
+  const chats = localGetChats().filter((c) => c.id !== chatId);
   localSaveChats(chats);
   localStorage.removeItem(`${KEYS.LOCAL_MESSAGES}:${chatId}`);
 }

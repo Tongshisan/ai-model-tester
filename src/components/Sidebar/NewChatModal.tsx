@@ -58,11 +58,10 @@ export function NewChatModal({ onClose }: Props) {
               <button
                 key={t}
                 onClick={() => handleTypeChange(t)}
-                className={`flex items-center gap-2 p-3 rounded-xl border transition-colors ${
-                  type === t
+                className={`flex items-center gap-2 p-3 rounded-xl border transition-colors ${type === t
                     ? 'bg-indigo-600/20 border-indigo-500 text-indigo-300'
                     : 'border-gray-700 hover:border-gray-600 text-gray-400 hover:text-gray-200'
-                }`}
+                  }`}
               >
                 <Icon size={16} />
                 <span className="text-sm font-medium">{label}</span>
@@ -79,17 +78,15 @@ export function NewChatModal({ onClose }: Props) {
               <button
                 key={m.id}
                 onClick={() => handleModelChange(m.id)}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
-                  selectedModel === m.id
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${selectedModel === m.id
                     ? 'bg-indigo-600 text-white'
                     : 'hover:bg-gray-800 text-gray-300'
-                }`}
+                  }`}
               >
                 <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${PROVIDER_COLORS[m.provider]}`} />
                 <span className="flex-1 text-left">{m.name}</span>
-                <span className={`text-xs px-1.5 py-0.5 rounded ${
-                  selectedModel === m.id ? 'bg-white/20 text-white' : 'bg-gray-700 text-gray-500'
-                }`}>
+                <span className={`text-xs px-1.5 py-0.5 rounded ${selectedModel === m.id ? 'bg-white/20 text-white' : 'bg-gray-700 text-gray-500'
+                  }`}>
                   {PROVIDER_NAMES[m.provider]}
                 </span>
               </button>

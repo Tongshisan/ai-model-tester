@@ -132,11 +132,10 @@ export function ImagePanel({ chatId }: Props) {
             <button
               key={m}
               onClick={() => setMode(m)}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
-                mode === m
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-colors ${mode === m
                   ? 'bg-indigo-600 text-white'
                   : 'text-gray-400 hover:text-gray-200'
-              }`}
+                }`}
             >
               <Icon size={14} />
               {label}

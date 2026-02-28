@@ -1,7 +1,21 @@
-import { create } from 'zustand';
-import type { Chat, Message, ChatType, Provider } from '../types';
-import { isSupabaseConfigured, dbGetChats, dbCreateChat, dbDeleteChat, dbUpdateChat, dbGetMessages, dbCreateMessage } from '../lib/supabase';
-import { localGetChats, localSaveChats, localGetMessages, localSaveMessages, localDeleteChat } from '../lib/localStorage';
+import { create } from "zustand";
+import type { Chat, Message, ChatType, Provider } from "../types";
+import {
+  isSupabaseConfigured,
+  dbGetChats,
+  dbCreateChat,
+  dbDeleteChat,
+  dbUpdateChat,
+  dbGetMessages,
+  dbCreateMessage,
+} from "../lib/supabase";
+import {
+  localGetChats,
+  localSaveChats,
+  localGetMessages,
+  localSaveMessages,
+  localDeleteChat,
+} from "../lib/localStorage";
 
 interface ChatStore {
   chats: Chat[];
@@ -12,11 +26,15 @@ interface ChatStore {
   error: string | null;
 
   fetchChats: () => Promise<void>;
-  createChat: (type: ChatType, provider: Provider, model: string) => Promise<Chat>;
+  createChat: (
+    type: ChatType,
+    provider: Provider,
+    model: string,
+  ) => Promise<Chat>;
   selectChat: (id: string) => Promise<void>;
   deleteChat: (id: string) => Promise<void>;
   updateChatTitle: (id: string, title: string) => Promise<void>;
-  addMessage: (msg: Omit<Message, 'id' | 'created_at'>) => Promise<Message>;
+  addMessage: (msg: Omit<Message, "id" | "created_at">) => Promise<Message>;
   appendStreamChunk: (chunk: string) => void;
   finalizeStream: (chatId: string, fullText: string) => Promise<void>;
   setStreaming: (v: boolean) => void;
@@ -49,7 +67,7 @@ export const useChatStore = create<ChatStore>((set, get) => ({
   createChat: async (type, provider, model) => {
     const newChat: Chat = {
       id: generateId(),
-      title: 'New Chat',
+      title: "New Chat",
       type,
       provider,
       model,
@@ -58,21 +76,32 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
     let created: Chat;
     if (isSupabaseConfigured) {
-      created = await dbCreateChat({ title: newChat.title, type, provider, model });
+      created = await dbCreateChat({
+        title: newChat.title,
+        type,
+        provider,
+        model,
+      });
     } else {
       created = newChat;
       const chats = [created, ...get().chats];
       localSaveChats(chats);
     }
 
-    set(s => ({ chats: [created, ...s.chats], currentChatId: created.id, messages: [] }));
+    set((s) => ({
+      chats: [created, ...s.chats],
+      currentChatId: created.id,
+      messages: [],
+    }));
     return created;
   },
 
   selectChat: async (id) => {
     set({ currentChatId: id, messages: [], loading: true });
     try {
-      const msgs = isSupabaseConfigured ? await dbGetMessages(id) : localGetMessages(id);
+      const msgs = isSupabaseConfigured
+        ? await dbGetMessages(id)
+        : localGetMessages(id);
       set({ messages: msgs, loading: false });
     } catch (e) {
       set({ error: String(e), loading: false });
@@ -85,19 +114,26 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     } else {
       localDeleteChat(id);
     }
-    const chats = get().chats.filter(c => c.id !== id);
-    const currentChatId = get().currentChatId === id ? null : get().currentChatId;
-    set({ chats, currentChatId, messages: currentChatId === null ? [] : get().messages });
+    const chats = get().chats.filter((c) => c.id !== id);
+    const currentChatId =
+      get().currentChatId === id ? null : get().currentChatId;
+    set({
+      chats,
+      currentChatId,
+      messages: currentChatId === null ? [] : get().messages,
+    });
   },
 
   updateChatTitle: async (id, title) => {
     if (isSupabaseConfigured) {
       await dbUpdateChat(id, { title });
     } else {
-      const chats = get().chats.map(c => c.id === id ? { ...c, title } : c);
+      const chats = get().chats.map((c) => (c.id === id ? { ...c, title } : c));
       localSaveChats(chats);
     }
-    set(s => ({ chats: s.chats.map(c => c.id === id ? { ...c, title } : c) }));
+    set((s) => ({
+      chats: s.chats.map((c) => (c.id === id ? { ...c, title } : c)),
+    }));
   },
 
   addMessage: async (msgData) => {
@@ -116,21 +152,24 @@ export const useChatStore = create<ChatStore>((set, get) => ({
       localSaveMessages(msgData.chat_id, all);
     }
 
-    set(s => ({ messages: [...s.messages, saved] }));
+    set((s) => ({ messages: [...s.messages, saved] }));
     return saved;
   },
 
   appendStreamChunk: (chunk) => {
-    set(s => {
+    set((s) => {
       const messages = [...s.messages];
       const last = messages[messages.length - 1];
-      if (last && last.role === 'assistant' && last.id === '__streaming__') {
-        messages[messages.length - 1] = { ...last, content: last.content + chunk };
+      if (last && last.role === "assistant" && last.id === "__streaming__") {
+        messages[messages.length - 1] = {
+          ...last,
+          content: last.content + chunk,
+        };
       } else {
         messages.push({
-          id: '__streaming__',
-          chat_id: s.currentChatId ?? '',
-          role: 'assistant',
+          id: "__streaming__",
+          chat_id: s.currentChatId ?? "",
+          role: "assistant",
           content: chunk,
           created_at: new Date().toISOString(),
         });
@@ -141,24 +180,28 @@ export const useChatStore = create<ChatStore>((set, get) => ({
 
   finalizeStream: async (chatId, fullText) => {
     const saved = await (isSupabaseConfigured
-      ? dbCreateMessage({ chat_id: chatId, role: 'assistant', content: fullText })
+      ? dbCreateMessage({
+          chat_id: chatId,
+          role: "assistant",
+          content: fullText,
+        })
       : Promise.resolve({
           id: generateId(),
           chat_id: chatId,
-          role: 'assistant' as const,
+          role: "assistant" as const,
           content: fullText,
           created_at: new Date().toISOString(),
         }));
 
     if (!isSupabaseConfigured) {
-      const all = get().messages
-        .filter(m => m.id !== '__streaming__')
+      const all = get()
+        .messages.filter((m) => m.id !== "__streaming__")
         .concat(saved);
       localSaveMessages(chatId, all);
     }
 
-    set(s => ({
-      messages: s.messages.map(m => m.id === '__streaming__' ? saved : m),
+    set((s) => ({
+      messages: s.messages.map((m) => (m.id === "__streaming__" ? saved : m)),
       streaming: false,
     }));
   },

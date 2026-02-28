@@ -13,14 +13,14 @@ A playground for testing and comparing AI models across text chat and image gene
 
 ## Supported Providers
 
-| Provider | Text | Image Gen | Image Edit |
-|----------|------|-----------|------------|
-| OpenAI | GPT-4o, GPT-4o Mini | DALL-E 3 | DALL-E 2 ✓ |
-| Anthropic | Claude 3.5 Sonnet, Claude 3 Haiku | — | — |
-| Google | Gemini 1.5 Pro, Flash | Imagen 3 | — |
-| DeepSeek | deepseek-chat, deepseek-reasoner | — | — |
-| 智谱 AI | GLM-4 Plus, GLM-4 Flash | CogView-3 Plus | — |
-| 通义千问 | Qwen Max, Qwen Plus | Wanx v1 | — |
+| Provider  | Text                              | Image Gen      | Image Edit |
+| --------- | --------------------------------- | -------------- | ---------- |
+| OpenAI    | GPT-4o, GPT-4o Mini               | DALL-E 3       | DALL-E 2 ✓ |
+| Anthropic | Claude 3.5 Sonnet, Claude 3 Haiku | —              | —          |
+| Google    | Gemini 1.5 Pro, Flash             | Imagen 3       | —          |
+| DeepSeek  | deepseek-chat, deepseek-reasoner  | —              | —          |
+| 智谱 AI   | GLM-4 Plus, GLM-4 Flash           | CogView-3 Plus | —          |
+| 通义千问  | Qwen Max, Qwen Plus               | Wanx v1        | —          |
 
 ## Setup
 

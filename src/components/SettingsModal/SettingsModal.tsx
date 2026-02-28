@@ -60,11 +60,10 @@ export function SettingsModal({ onClose }: Props) {
 
         <div className="overflow-y-auto p-6 flex-1">
           {/* Supabase status */}
-          <div className={`flex items-center gap-2 p-3 rounded-lg mb-6 text-sm ${
-            isSupabaseConfigured
+          <div className={`flex items-center gap-2 p-3 rounded-lg mb-6 text-sm ${isSupabaseConfigured
               ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400'
               : 'bg-yellow-500/10 border border-yellow-500/20 text-yellow-400'
-          }`}>
+            }`}>
             {isSupabaseConfigured
               ? <><CheckCircle size={16} /> Supabase connected — chat history will be saved to cloud</>
               : <><AlertCircle size={16} /> Supabase not configured — chat history saved locally only</>

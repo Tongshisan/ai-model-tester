@@ -60,11 +60,10 @@ export function ModelSelector({ type, selectedModel, selectedProvider, onChange 
                       onChange(m.provider, m.id);
                       setOpen(false);
                     }}
-                    className={`w-full text-left flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${
-                      m.id === selectedModel
+                    className={`w-full text-left flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-colors ${m.id === selectedModel
                         ? 'bg-indigo-600 text-white'
                         : 'hover:bg-gray-700 text-gray-300'
-                    }`}
+                      }`}
                   >
                     <span className={`w-2 h-2 rounded-full flex-shrink-0 ${PROVIDER_COLORS[m.provider]}`} />
                     {m.name}

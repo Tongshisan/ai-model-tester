@@ -23,9 +23,8 @@ export function MessageBubble({ message, isStreaming }: Props) {
   return (
     <div className={`flex gap-3 ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
       {/* Avatar */}
-      <div className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center mt-1 ${
-        isUser ? 'bg-indigo-600' : 'bg-gray-700'
-      }`}>
+      <div className={`w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center mt-1 ${isUser ? 'bg-indigo-600' : 'bg-gray-700'
+        }`}>
         {isUser ? <User size={14} className="text-white" /> : <Bot size={14} className="text-gray-300" />}
       </div>
 
@@ -43,11 +42,10 @@ export function MessageBubble({ message, isStreaming }: Props) {
         )}
 
         {message.content && (
-          <div className={`relative rounded-2xl px-4 py-3 ${
-            isUser
+          <div className={`relative rounded-2xl px-4 py-3 ${isUser
               ? 'bg-indigo-600 text-white rounded-tr-sm'
               : 'bg-gray-800 text-gray-100 rounded-tl-sm'
-          }`}>
+            }`}>
             {isUser ? (
               <p className="text-sm whitespace-pre-wrap break-words">{message.content}</p>
             ) : (

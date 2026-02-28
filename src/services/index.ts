@@ -1,16 +1,19 @@
-import type { Message, Provider } from '../types';
-import { getApiKeys } from '../lib/localStorage';
-import { openaiChat, openaiGenerateImage, openaiEditImage } from './openai';
-import { anthropicChat } from './anthropic';
-import { geminiChat, geminiGenerateImage } from './gemini';
-import { deepseekChat } from './deepseek';
-import { zhipuChat, zhipuGenerateImage } from './zhipu';
-import { qwenChat, qwenGenerateImage } from './qwen';
+import type { Message, Provider } from "../types";
+import { getApiKeys } from "../lib/localStorage";
+import { openaiChat, openaiGenerateImage, openaiEditImage } from "./openai";
+import { anthropicChat } from "./anthropic";
+import { geminiChat, geminiGenerateImage } from "./gemini";
+import { deepseekChat } from "./deepseek";
+import { zhipuChat, zhipuGenerateImage } from "./zhipu";
+import { qwenChat, qwenGenerateImage } from "./qwen";
 
 function getKey(provider: Provider): string {
   const keys = getApiKeys();
   const key = keys[provider];
-  if (!key) throw new Error(`Missing API key for ${provider}. Please configure it in Settings.`);
+  if (!key)
+    throw new Error(
+      `Missing API key for ${provider}. Please configure it in Settings.`,
+    );
   return key;
 }
 
@@ -19,21 +22,21 @@ export async function sendChatMessage(
   provider: Provider,
   model: string,
   onChunk: (text: string) => void,
-  signal?: AbortSignal
+  signal?: AbortSignal,
 ): Promise<string> {
   const key = getKey(provider);
   switch (provider) {
-    case 'openai':
+    case "openai":
       return openaiChat(messages, model, key, onChunk, signal);
-    case 'anthropic':
+    case "anthropic":
       return anthropicChat(messages, model, key, onChunk, signal);
-    case 'google':
+    case "google":
       return geminiChat(messages, model, key, onChunk, signal);
-    case 'deepseek':
+    case "deepseek":
       return deepseekChat(messages, model, key, onChunk, signal);
-    case 'zhipu':
+    case "zhipu":
       return zhipuChat(messages, model, key, onChunk, signal);
-    case 'qwen':
+    case "qwen":
       return qwenChat(messages, model, key, onChunk, signal);
     default:
       throw new Error(`Unknown provider: ${provider}`);
@@ -46,13 +49,13 @@ export async function generateImage(
 ): Promise<string> {
   const key = getKey(provider);
   switch (provider) {
-    case 'openai':
+    case "openai":
       return openaiGenerateImage(prompt, key);
-    case 'google':
+    case "google":
       return geminiGenerateImage(prompt, key);
-    case 'zhipu':
+    case "zhipu":
       return zhipuGenerateImage(prompt, key);
-    case 'qwen':
+    case "qwen":
       return qwenGenerateImage(prompt, key);
     default:
       throw new Error(`Provider ${provider} does not support image generation`);
@@ -67,9 +70,11 @@ export async function editImage(
 ): Promise<string> {
   const key = getKey(provider);
   switch (provider) {
-    case 'openai':
+    case "openai":
       return openaiEditImage(imageBase64, maskBase64, prompt, key);
     default:
-      throw new Error(`Provider ${provider} does not support image editing via API`);
+      throw new Error(
+        `Provider ${provider} does not support image editing via API`,
+      );
   }
 }
