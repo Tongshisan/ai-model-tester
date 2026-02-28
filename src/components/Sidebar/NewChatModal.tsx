@@ -1,8 +1,17 @@
 import React, { useState } from 'react';
 import { X, MessageSquare, Image } from 'lucide-react';
 import { useChatStore } from '../../store/chatStore';
-import type { ChatType, Provider } from '../../types';
-import { MODELS, PROVIDER_NAMES, PROVIDER_COLORS } from '../../types';
+import type { ChatType, ModelConfig, Provider } from '../../types';
+import { MODELS, PROVIDER_NAMES } from '../../types';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 
 interface Props {
   onClose: () => void;
@@ -59,8 +68,8 @@ export function NewChatModal({ onClose }: Props) {
                 key={t}
                 onClick={() => handleTypeChange(t)}
                 className={`flex items-center gap-2 p-3 rounded-xl border transition-colors ${type === t
-                    ? 'bg-indigo-600/20 border-indigo-500 text-indigo-300'
-                    : 'border-gray-700 hover:border-gray-600 text-gray-400 hover:text-gray-200'
+                  ? 'bg-indigo-600/20 border-indigo-500 text-indigo-300'
+                  : 'border-gray-700 hover:border-gray-600 text-gray-400 hover:text-gray-200'
                   }`}
               >
                 <Icon size={16} />
@@ -73,25 +82,33 @@ export function NewChatModal({ onClose }: Props) {
         {/* Model Selection */}
         <div className="mb-6">
           <label className="text-sm font-medium text-gray-400 mb-2 block">Select Model</label>
-          <div className="space-y-1 max-h-56 overflow-y-auto">
-            {filteredModels.map(m => (
-              <button
-                key={m.id}
-                onClick={() => handleModelChange(m.id)}
-                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${selectedModel === m.id
-                    ? 'bg-indigo-600 text-white'
-                    : 'hover:bg-gray-800 text-gray-300'
-                  }`}
-              >
-                <span className={`w-2.5 h-2.5 rounded-full flex-shrink-0 ${PROVIDER_COLORS[m.provider]}`} />
-                <span className="flex-1 text-left">{m.name}</span>
-                <span className={`text-xs px-1.5 py-0.5 rounded ${selectedModel === m.id ? 'bg-white/20 text-white' : 'bg-gray-700 text-gray-500'
-                  }`}>
-                  {PROVIDER_NAMES[m.provider]}
-                </span>
-              </button>
-            ))}
-          </div>
+          <Select value={selectedModel} onValueChange={handleModelChange}>
+            <SelectTrigger className="w-full bg-gray-800 border-gray-700 text-gray-200 focus-visible:ring-indigo-500 focus-visible:border-indigo-500">
+              <SelectValue placeholder="Select a model" />
+            </SelectTrigger>
+            <SelectContent className="bg-gray-800 border-gray-700 text-gray-200">
+              {(Object.entries(
+                filteredModels.reduce<Record<Provider, ModelConfig[]>>((acc, m) => {
+                  if (!acc[m.provider]) acc[m.provider] = [];
+                  acc[m.provider].push(m);
+                  return acc;
+                }, {} as Record<Provider, ModelConfig[]>),
+              ) as [Provider, ModelConfig[]][]).map(([provider, models]) => (
+                <SelectGroup key={provider}>
+                  <SelectLabel className="text-gray-500">{PROVIDER_NAMES[provider]}</SelectLabel>
+                  {models.map(m => (
+                    <SelectItem
+                      key={m.id}
+                      value={m.id}
+                      className="text-gray-200 focus:bg-indigo-600 focus:text-white"
+                    >
+                      {m.name}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <button
