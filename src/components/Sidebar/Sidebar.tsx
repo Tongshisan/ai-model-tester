@@ -63,9 +63,9 @@ export function Sidebar({ onOpenSettings }: Props) {
               <div
                 key={chat.id}
                 onClick={() => selectChat(chat.id)}
-                className={`group flex items-center gap-2 px-3 py-2.5 rounded-lg cursor-pointer mb-1 transition-colors ${currentChatId === chat.id
-                    ? 'bg-indigo-600/20 border border-indigo-500/30'
-                    : 'hover:bg-gray-800'
+                className={`group flex items-center gap-2 px-3 py-2.5 rounded-lg cursor-pointer mb-1 transition-colors border outline-none ${currentChatId === chat.id
+                  ? 'bg-indigo-600/20 border-indigo-500/30'
+                  : 'border-transparent hover:bg-gray-800'
                   }`}
               >
                 <div className={`w-6 h-6 rounded flex-shrink-0 flex items-center justify-center ${chat.type === 'image' ? 'bg-purple-600/20' : 'bg-blue-600/20'
