@@ -24,6 +24,7 @@ export interface Chat {
   type: ChatType;
   provider: Provider;
   model: string;
+  system_prompt?: string;
   created_at: string;
   updated_at?: string;
 }

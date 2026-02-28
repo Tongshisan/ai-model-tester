@@ -34,6 +34,7 @@ interface ChatStore {
   selectChat: (id: string) => Promise<void>;
   deleteChat: (id: string) => Promise<void>;
   updateChatTitle: (id: string, title: string) => Promise<void>;
+  updateChat: (id: string, updates: Partial<Chat>) => Promise<void>;
   addMessage: (msg: Omit<Message, "id" | "created_at">) => Promise<Message>;
   appendStreamChunk: (chunk: string) => void;
   finalizeStream: (chatId: string, fullText: string) => Promise<void>;
@@ -133,6 +134,20 @@ export const useChatStore = create<ChatStore>((set, get) => ({
     }
     set((s) => ({
       chats: s.chats.map((c) => (c.id === id ? { ...c, title } : c)),
+    }));
+  },
+
+  updateChat: async (id, updates) => {
+    if (isSupabaseConfigured) {
+      await dbUpdateChat(id, updates as Record<string, unknown>);
+    } else {
+      const chats = get().chats.map((c) =>
+        c.id === id ? { ...c, ...updates } : c,
+      );
+      localSaveChats(chats);
+    }
+    set((s) => ({
+      chats: s.chats.map((c) => (c.id === id ? { ...c, ...updates } : c)),
     }));
   },
 

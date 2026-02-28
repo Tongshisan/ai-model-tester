@@ -66,7 +66,10 @@ export function ChatWindow({ chatId }: Props) {
     abortRef.current = new AbortController();
 
     try {
-      const history = [...messages, userMsg];
+      const systemMessages = chat.system_prompt
+        ? [{ id: '__system__', chat_id: chatId, role: 'system' as const, content: chat.system_prompt, created_at: '' }]
+        : [];
+      const history = [...systemMessages, ...messages, userMsg];
       let full = '';
 
       await sendChatMessage(

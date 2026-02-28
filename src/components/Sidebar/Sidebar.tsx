@@ -1,9 +1,17 @@
 import React, { useState } from 'react';
-import { Plus, MessageSquare, Image, Trash2, Settings, Bot } from 'lucide-react';
+import { Plus, MessageSquare, Image, Settings, Bot, MoreHorizontal, Trash2 } from 'lucide-react';
 import { useChatStore } from '../../store/chatStore';
-import type { ChatType, Provider } from '../../types';
-import { MODELS, PROVIDER_COLORS, PROVIDER_NAMES } from '../../types';
+import { MODELS, PROVIDER_COLORS } from '../../types';
+import type { Chat } from '../../types';
 import { NewChatModal } from './NewChatModal';
+import { ChatSettingsModal } from './ChatSettingsModal';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 interface Props {
   onOpenSettings: () => void;
@@ -12,23 +20,10 @@ interface Props {
 export function Sidebar({ onOpenSettings }: Props) {
   const { chats, currentChatId, selectChat, deleteChat } = useChatStore();
   const [showNewChat, setShowNewChat] = useState(false);
-  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [settingsChat, setSettingsChat] = useState<Chat | null>(null);
 
-  async function handleDelete(e: React.MouseEvent, id: string) {
-    e.stopPropagation();
-    setDeletingId(id);
+  async function handleDelete(id: string) {
     await deleteChat(id);
-    setDeletingId(null);
-  }
-
-  function formatDate(dateStr: string) {
-    const d = new Date(dateStr);
-    const now = new Date();
-    const diff = now.getTime() - d.getTime();
-    if (diff < 60000) return 'Just now';
-    if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
-    if (diff < 86400000) return `${Math.floor(diff / 3600000)}h ago`;
-    return d.toLocaleDateString();
   }
 
   return (
@@ -91,13 +86,38 @@ export function Sidebar({ onOpenSettings }: Props) {
                   </div>
                 </div>
 
-                <button
-                  onClick={(e) => handleDelete(e, chat.id)}
-                  disabled={deletingId === chat.id}
-                  className="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-500/20 rounded text-gray-500 hover:text-red-400 transition-all flex-shrink-0"
-                >
-                  <Trash2 size={12} />
-                </button>
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      onClick={e => e.stopPropagation()}
+                      className="opacity-0 group-hover:opacity-100 p-1 hover:bg-gray-700 rounded text-gray-400 hover:text-gray-200 transition-all flex-shrink-0"
+                    >
+                      <MoreHorizontal size={14} />
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent
+                    side="right"
+                    align="start"
+                    className="bg-gray-800 border-gray-700 text-gray-200 min-w-[140px]"
+                  >
+                    <DropdownMenuItem
+                      className="focus:bg-gray-700 focus:text-gray-100 cursor-pointer"
+                      onSelect={() => setSettingsChat(chat)}
+                    >
+                      <Settings size={14} />
+                      设置
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator className="bg-gray-700" />
+                    <DropdownMenuItem
+                      variant="destructive"
+                      className="cursor-pointer"
+                      onSelect={() => handleDelete(chat.id)}
+                    >
+                      <Trash2 size={14} />
+                      删除对话
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             );
           })
@@ -117,6 +137,13 @@ export function Sidebar({ onOpenSettings }: Props) {
 
       {showNewChat && (
         <NewChatModal onClose={() => setShowNewChat(false)} />
+      )}
+
+      {settingsChat && (
+        <ChatSettingsModal
+          chat={settingsChat}
+          onClose={() => setSettingsChat(null)}
+        />
       )}
     </aside>
   );
